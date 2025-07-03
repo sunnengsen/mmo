@@ -1,15 +1,47 @@
-# Video Tool Pro
+# 🎬 Video Tool Pro - Enhanced with Theme Switching
 
-A professional video processing application built with PyQt6 that provides an easy-to-use interface for downloading, flipping, splitting, and converting videos.
+A professional video processing application with beautiful light/dark theme switching, built with PyQt6.
 
-## Features
+## ✨ **New Theme Features**
+- 🌙 **Dark Mode** - Easy on the eyes
+- ☀️ **Light Mode** - Clean and professional  
+- 🔄 **Instant Switching** - One-click theme toggle
+- 🎨 **Complete UI Update** - All elements change automatically
 
-- **Video Download**: Download videos from YouTube, TikTok, and other platforms using yt-dlp
-- **Video Flipping**: Flip videos horizontally, vertically, or both
-- **Batch Processing**: Process multiple videos in a folder at once
-- **Video Splitting**: Split long videos into smaller segments
-- **TikTok/Reel Conversion**: Convert videos to vertical format for social media
-- **Progress Tracking**: Real-time progress monitoring and logging
+## 🚀 **Quick Setup for New Users**
+
+### **Just cloned this project? Start here:**
+
+1. **Read first:** [`START_HERE.md`](START_HERE.md) - Quick 2-minute setup
+2. **Detailed setup:** [`NEW_COMPUTER_SETUP.md`](NEW_COMPUTER_SETUP.md) - Step-by-step checklist
+3. **Need help?** [`SETUP_GUIDE.md`](SETUP_GUIDE.md) - Complete instructions
+
+### **Super Quick Setup:**
+```bash
+# Automated setup (recommended)
+./setup.sh          # Mac/Linux
+setup.bat           # Windows
+
+# Start the app
+python video_tool_app_themed.py
+```
+
+## 📋 **Core Features**
+
+### **Video Processing**
+- ✅ **Download** videos from YouTube, TikTok, Instagram, etc.
+- ✅ **Flip** videos horizontally, vertically, or both
+- ✅ **Split** long videos into smaller segments
+- ✅ **Convert** to TikTok/Reel format (vertical)
+- ✅ **Batch process** multiple videos at once
+- ✅ **Real-time progress** tracking and logging
+
+### **Enhanced UI**
+- ✅ **Theme switching** between light and dark modes
+- ✅ **Modern design** with rounded corners and gradients
+- ✅ **Responsive interface** with instant feedback
+- ✅ **Professional styling** for all UI elements
+- ✅ **Visual status indicators** with color coding
 
 ## Project Structure
 
