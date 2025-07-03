@@ -18,6 +18,8 @@ This guide will help you clone and run the Video Tool Pro project on any compute
 
 ## 🔧 Step-by-Step Installation
 
+> **🪟 Windows Users:** For Windows-specific instructions, see [`WINDOWS_SETUP.md`](WINDOWS_SETUP.md) or [`WINDOWS_QUICK_REF.md`](WINDOWS_QUICK_REF.md)
+
 ### Step 1: Install Python
 
 #### macOS:
@@ -29,9 +31,13 @@ brew install python3
 ```
 
 #### Windows:
-```bash
+```cmd
 # Download from https://www.python.org/downloads/
-# Make sure to check "Add Python to PATH" during installation
+# ⚠️ IMPORTANT: Check "Add Python to PATH" during installation!
+
+# Verify installation:
+python --version
+# Should show Python 3.8+
 ```
 
 #### Linux (Ubuntu/Debian):
@@ -49,14 +55,20 @@ brew install ffmpeg
 ```
 
 #### Windows:
-```bash
-# Option 1: Using Chocolatey
+```cmd
+# Option 1: Using Chocolatey (Recommended)
 choco install ffmpeg
 
-# Option 2: Manual installation
+# Option 2: Using winget (Windows 10/11)  
+winget install ffmpeg
+
+# Option 3: Manual installation
 # 1. Download from https://ffmpeg.org/download.html
 # 2. Extract to C:\ffmpeg
 # 3. Add C:\ffmpeg\bin to your PATH environment variable
+
+# Verify installation:
+ffmpeg -version
 ```
 
 #### Linux (Ubuntu/Debian):
