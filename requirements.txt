@@ -1,0 +1,7 @@
+PyQt6>=6.0.0
+yt-dlp>=2023.1.6
+
+# Note: ffmpeg must be installed separately and available in PATH
+# For macOS: brew install ffmpeg
+# For Windows: Download from https://ffmpeg.org/download.html
+# For Ubuntu/Debian: sudo apt install ffmpeg
