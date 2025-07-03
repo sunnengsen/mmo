@@ -163,6 +163,28 @@ if %errorlevel% neq 0 (
     echo [SUCCESS] ✅ Video downloader working
 )
 
+REM Test download functionality
+echo [INFO] Testing download functionality...
+python test_download.py >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [WARNING] ⚠️  Download test had issues (check network/URL)
+    echo    You can run 'python test_download.py' manually for details
+) else (
+    echo [SUCCESS] ✅ Download functionality tested
+)
+
+REM Test main app
+echo [INFO] Testing main app import...
+python test_app.py >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERROR] ❌ Main app test failed
+    echo    Run 'python test_app.py' to see details
+    pause
+    exit /b 1
+) else (
+    echo [SUCCESS] ✅ Main app working
+)
+
 echo.
 echo ========================================
 echo [SUCCESS] 🎉 Setup completed successfully!
@@ -172,13 +194,13 @@ echo ✅ All tests passed! Your system is ready.
 echo.
 echo 🚀 To start using Video Tool Pro:
 echo    1. Make sure this window shows "(venv)" at the prompt
-echo    2. Run: python video_tool_app_themed.py
+echo    2. Run: python video_tool_app.py
 echo    3. Or test themes: python simple_theme_demo.py
 echo.
 echo 💡 Next time you want to use the app:
 echo    1. Open Command Prompt in this folder
 echo    2. Run: venv\Scripts\activate
-echo    3. Run: python video_tool_app_themed.py
+echo    3. Run: python video_tool_app.py
 echo.
 echo 🎨 Features you can try:
 echo    • Download videos from YouTube, TikTok
@@ -191,17 +213,23 @@ echo    • START_HERE.md - Quick guide
 echo    • WINDOWS_SETUP.md - Windows-specific help
 echo    • SETUP_GUIDE.md - Detailed instructions
 echo.
+echo 🔧 If downloads don't work:
+echo    1. Check internet connection
+echo    2. Try different video URLs
+echo    3. Run: python test_download.py (for detailed diagnosis)
+echo    4. Make sure yt-dlp and FFmpeg are in PATH
+echo.
 
 REM Final check and user prompt
-echo Press any key to start the theme demo, or Ctrl+C to exit...
+echo Press any key to start Video Tool Pro, or Ctrl+C to exit...
 pause >nul
 
 echo.
-echo [INFO] Starting theme demo...
-python simple_theme_demo.py
+echo [INFO] Starting Video Tool Pro...
+python video_tool_app.py
 if %errorlevel% neq 0 (
-    echo [INFO] Demo couldn't start automatically.
-    echo Run: python simple_theme_demo.py
+    echo [INFO] App couldn't start automatically.
+    echo Run: python video_tool_app.py
 )
 
 echo.
