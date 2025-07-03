@@ -194,13 +194,13 @@ echo ✅ All tests passed! Your system is ready.
 echo.
 echo 🚀 To start using Video Tool Pro:
 echo    1. Make sure this window shows "(venv)" at the prompt
-echo    2. Run: python video_tool_app.py
+echo    2. Run: python app.py
 echo    3. Or test themes: python simple_theme_demo.py
 echo.
 echo 💡 Next time you want to use the app:
 echo    1. Open Command Prompt in this folder
 echo    2. Run: venv\Scripts\activate
-echo    3. Run: python video_tool_app.py
+echo    3. Run: python app.py
 echo.
 echo 🎨 Features you can try:
 echo    • Download videos from YouTube, TikTok
@@ -226,10 +226,10 @@ pause >nul
 
 echo.
 echo [INFO] Starting Video Tool Pro...
-python video_tool_app.py
+python app.py
 if %errorlevel% neq 0 (
     echo [INFO] App couldn't start automatically.
-    echo Run: python video_tool_app.py
+    echo Run: python app.py
 )
 
 echo.

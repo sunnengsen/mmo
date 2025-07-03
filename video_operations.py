@@ -211,13 +211,44 @@ class VideoOperations:
         if duration_choice in duration_map:
             return duration_map[duration_choice]
         else:  # Custom duration
-            custom_minutes, ok = QInputDialog.getInt(self.main_window, "Custom Duration", 
-                                                   "Enter duration in minutes:", 
-                                                   10, 1, 180, 1)  # Default 10, min 1, max 180
+            # Enhanced custom duration input with decimal support
+            custom_input, ok = QInputDialog.getText(
+                self.main_window, 
+                "Custom Duration", 
+                "Enter duration in minutes (e.g., 2.5 for 2 minutes 30 seconds):\n"
+                "Range: 0.1 to 180 minutes",
+                text="10.0"
+            )
             if not ok:
                 self.main_window.log_message("Split operation cancelled.")
                 return None, None
-            return custom_minutes * 60, f"{custom_minutes}min"
+            
+            try:
+                custom_minutes = float(custom_input.strip())
+                
+                # Validate input range
+                if custom_minutes < 0.1:
+                    self.main_window.show_error("Duration must be at least 0.1 minutes (6 seconds).")
+                    return None, None
+                elif custom_minutes > 180:
+                    self.main_window.show_error("Duration cannot exceed 180 minutes (3 hours).")
+                    return None, None
+                
+                # Convert to seconds
+                custom_seconds = int(custom_minutes * 60)
+                
+                # Create descriptive name
+                if custom_minutes == int(custom_minutes):
+                    duration_name = f"{int(custom_minutes)}min"
+                else:
+                    duration_name = f"{custom_minutes}min"
+                
+                self.main_window.log_message(f"Custom duration set: {custom_minutes} minutes ({custom_seconds} seconds)")
+                return custom_seconds, duration_name
+                
+            except ValueError:
+                self.main_window.show_error("Invalid input. Please enter a valid number (e.g., 2.5).")
+                return None, None
 
     def _find_video_files(self, folder_path):
         """Find all video files in a folder"""
