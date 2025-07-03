@@ -10,21 +10,38 @@ echo.
 
 REM Check if Python is installed
 echo [INFO] Checking Python installation...
-python --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ERROR] Python is not installed or not in PATH!
-    echo.
-    echo ❌ Python not found. Please install Python first:
-    echo    1. Go to https://www.python.org/downloads/
-    echo    2. Download Python 3.8 or higher
-    echo    3. During installation, CHECK "Add Python to PATH"
-    echo    4. Restart Command Prompt and try again
-    echo.
-    pause
-    exit /b 1
+
+REM Check if we're already in a virtual environment
+if defined VIRTUAL_ENV (
+    echo [INFO] Virtual environment detected: %VIRTUAL_ENV%
+    python --version >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo [ERROR] Python not working in current virtual environment!
+        echo   Try: deactivate and run setup.bat again
+        pause
+        exit /b 1
+    ) else (
+        echo [SUCCESS] ✅ Python found in virtual environment
+        python --version
+    )
 ) else (
-    echo [SUCCESS] ✅ Python found
-    python --version
+    REM Check for global Python installation
+    python --version >nul 2>&1
+    if %errorlevel% neq 0 (
+        echo [ERROR] Python is not installed or not in PATH!
+        echo.
+        echo ❌ Python not found. Please install Python first:
+        echo    1. Go to https://www.python.org/downloads/
+        echo    2. Download Python 3.8 or higher
+        echo    3. During installation, CHECK "Add Python to PATH"
+        echo    4. Restart Command Prompt and try again
+        echo.
+        pause
+        exit /b 1
+    ) else (
+        echo [SUCCESS] ✅ Python found
+        python --version
+    )
 )
 
 REM Check if pip is installed
@@ -62,31 +79,41 @@ if %errorlevel% neq 0 (
 REM Create virtual environment
 echo.
 echo [INFO] Creating virtual environment...
-if exist "venv" (
-    echo [WARNING] ⚠️  Virtual environment already exists
-    echo    Removing old environment...
-    rmdir /s /q venv
-)
-
-python -m venv venv
-if %errorlevel% neq 0 (
-    echo [ERROR] ❌ Failed to create virtual environment
-    echo    Make sure Python is properly installed
-    pause
-    exit /b 1
+if defined VIRTUAL_ENV (
+    echo [INFO] Already in virtual environment: %VIRTUAL_ENV%
+    echo [INFO] Skipping virtual environment creation
 ) else (
-    echo [SUCCESS] ✅ Virtual environment created
+    if exist "venv" (
+        echo [WARNING] ⚠️  Virtual environment already exists
+        echo    Removing old environment...
+        rmdir /s /q venv
+    )
+
+    python -m venv venv
+    if %errorlevel% neq 0 (
+        echo [ERROR] ❌ Failed to create virtual environment
+        echo    Make sure Python is properly installed
+        pause
+        exit /b 1
+    ) else (
+        echo [SUCCESS] ✅ Virtual environment created
+    )
 )
 
 REM Activate virtual environment
 echo [INFO] Activating virtual environment...
-call venv\Scripts\activate.bat
-if %errorlevel% neq 0 (
-    echo [ERROR] ❌ Failed to activate virtual environment
-    pause
-    exit /b 1
+if defined VIRTUAL_ENV (
+    echo [INFO] Already in virtual environment: %VIRTUAL_ENV%
+    echo [SUCCESS] ✅ Virtual environment already activated
 ) else (
-    echo [SUCCESS] ✅ Virtual environment activated
+    call venv\Scripts\activate.bat
+    if %errorlevel% neq 0 (
+        echo [ERROR] ❌ Failed to activate virtual environment
+        pause
+        exit /b 1
+    ) else (
+        echo [SUCCESS] ✅ Virtual environment activated
+    )
 )
 
 REM Upgrade pip
