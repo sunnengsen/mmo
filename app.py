@@ -140,6 +140,11 @@ class VideoToolAppWithThemes(QWidget):
         self.split_btn.clicked.connect(self.video_ops.split_video)
         row1.addWidget(self.split_btn)
 
+        self.remove_logo_btn = QPushButton("🚫 Remove Logo")
+        self.remove_logo_btn.setObjectName("primary_btn")
+        self.remove_logo_btn.clicked.connect(self.video_ops.remove_logo)
+        row1.addWidget(self.remove_logo_btn)
+
         processing_layout.addLayout(row1)
 
         # Second row of buttons
@@ -265,6 +270,7 @@ class VideoToolAppWithThemes(QWidget):
         self.download_btn.setEnabled(enabled)
         self.flip_btn.setEnabled(enabled)
         self.split_btn.setEnabled(enabled)
+        self.remove_logo_btn.setEnabled(enabled)
         self.flip_folder_btn.setEnabled(enabled)
         self.convert_to_reel_btn.setEnabled(enabled)
         self.select_folder_btn.setEnabled(enabled)
