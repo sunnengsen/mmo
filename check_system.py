@@ -39,6 +39,8 @@ def check_command(command, display_name=None):
         display_name = command
     
     print(f"🔧 Checking {display_name}...")
+    
+    # First try global command
     try:
         result = subprocess.run([command, '--version'], 
                               capture_output=True, 
@@ -48,12 +50,27 @@ def check_command(command, display_name=None):
             version_line = result.stdout.split('\n')[0]
             print(f"   ✅ {display_name} (OK) - {version_line}")
             return True
-        else:
-            print(f"   ❌ {display_name} (Not working)")
-            return False
     except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
-        print(f"   ❌ {display_name} (Not found)")
-        return False
+        pass
+    
+    # Try in virtual environment if global fails
+    import os
+    venv_path = os.path.join(os.getcwd(), '.venv', 'bin', command)
+    if os.path.exists(venv_path):
+        try:
+            result = subprocess.run([venv_path, '--version'], 
+                                  capture_output=True, 
+                                  text=True, 
+                                  timeout=10)
+            if result.returncode == 0:
+                version_line = result.stdout.split('\n')[0]
+                print(f"   ✅ {display_name} (OK - in venv) - {version_line}")
+                return True
+        except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
+            pass
+    
+    print(f"   ❌ {display_name} (Not found)")
+    return False
 
 def check_project_files():
     """Check if required project files exist"""
@@ -132,45 +149,34 @@ def main():
         print("🎉 All checks passed! Your system is ready to run Video Tool Pro.")
         print()
         print("🚀 To start the application:")
-        print("   python video_tool_app.py")
+        print("   .venv/bin/python app.py")
         print("   or")
-        print("   python video_tool_app_themed.py  (with theme switching)")
+        print("   .venv/bin/python video_tool_app.py")
         print("   or")
-        print("   python simple_theme_demo.py  (theme demo)")
+        print("   .venv/bin/python video_tool_app_themed.py  (with theme switching)")
+        print("   or")
+        print("   .venv/bin/python simple_theme_demo.py  (theme demo)")
+        print()
+        print("💡 Alternatively, activate the virtual environment first:")
+        print("   source .venv/bin/activate")
+        print("   python app.py")
         return True
     else:
         print("⚠️  Some checks failed. Please address the missing requirements.")
         print()
         print("💡 Quick fixes:")
         if not check_module('PyQt6', silent=True):
-            print("   pip install PyQt6")
+            print("   .venv/bin/pip install PyQt6")
         if not check_command('ffmpeg', silent=True):
             print("   Install FFmpeg from https://ffmpeg.org/download.html")
+            print("   On macOS: brew install ffmpeg")
         if not check_command('yt-dlp', silent=True):
-            print("   pip install yt-dlp")
+            print("   .venv/bin/pip install yt-dlp")
         print()
         print("📖 For detailed setup instructions, see SETUP_GUIDE.md")
         return False
 
-def check_module_silent(module_name):
-    """Silently check if a module is available"""
-    try:
-        importlib.import_module(module_name)
-        return True
-    except ImportError:
-        return False
 
-def check_command_silent(command):
-    """Silently check if a command is available"""
-    try:
-        result = subprocess.run([command, '--version'], 
-                              capture_output=True, 
-                              timeout=5)
-        return result.returncode == 0
-    except:
-        return False
-
-# Add silent check functions for the summary
 def check_module(module_name, display_name=None, silent=False):
     if silent:
         try:
@@ -194,34 +200,107 @@ def check_module(module_name, display_name=None, silent=False):
 
 def check_command(command, display_name=None, silent=False):
     if silent:
-        try:
-            result = subprocess.run([command, '--version'], 
-                                  capture_output=True, 
-                                  timeout=5)
-            return result.returncode == 0
-        except:
-            return False
+        # Try global command first
+        version_flags = ['--version', '-version', '-V']  # Different version flags
+        for flag in version_flags:
+            try:
+                result = subprocess.run([command, flag], 
+                                      capture_output=True, 
+                                      timeout=5)
+                if result.returncode == 0:
+                    return True
+            except:
+                continue
+        
+        # Try common system paths
+        import os
+        common_paths = ['/usr/local/bin', '/opt/homebrew/bin', '/usr/bin']
+        for path in common_paths:
+            full_path = os.path.join(path, command)
+            if os.path.exists(full_path):
+                for flag in version_flags:
+                    try:
+                        result = subprocess.run([full_path, flag], 
+                                              capture_output=True, 
+                                              timeout=5)
+                        if result.returncode == 0:
+                            return True
+                    except:
+                        continue
+        
+        # Try in virtual environment
+        venv_path = os.path.join(os.getcwd(), '.venv', 'bin', command)
+        if os.path.exists(venv_path):
+            for flag in version_flags:
+                try:
+                    result = subprocess.run([venv_path, flag], 
+                                          capture_output=True, 
+                                          timeout=5)
+                    if result.returncode == 0:
+                        return True
+                except:
+                    continue
+        return False
     else:
-        # Original implementation
+        # Original implementation with venv support
         if display_name is None:
             display_name = command
         
         print(f"🔧 Checking {display_name}...")
-        try:
-            result = subprocess.run([command, '--version'], 
-                                  capture_output=True, 
-                                  text=True, 
-                                  timeout=10)
-            if result.returncode == 0:
-                version_line = result.stdout.split('\n')[0]
-                print(f"   ✅ {display_name} (OK) - {version_line}")
-                return True
-            else:
-                print(f"   ❌ {display_name} (Not working)")
-                return False
-        except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
-            print(f"   ❌ {display_name} (Not found)")
-            return False
+        
+        version_flags = ['--version', '-version', '-V']  # Different version flags
+        
+        # First try global command
+        for flag in version_flags:
+            try:
+                result = subprocess.run([command, flag], 
+                                      capture_output=True, 
+                                      text=True, 
+                                      timeout=10)
+                if result.returncode == 0:
+                    version_line = result.stdout.split('\n')[0]
+                    print(f"   ✅ {display_name} (OK) - {version_line}")
+                    return True
+            except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
+                continue
+        
+        # Try common system paths
+        import os
+        common_paths = ['/usr/local/bin', '/opt/homebrew/bin', '/usr/bin']
+        for path in common_paths:
+            full_path = os.path.join(path, command)
+            if os.path.exists(full_path):
+                for flag in version_flags:
+                    try:
+                        result = subprocess.run([full_path, flag], 
+                                              capture_output=True, 
+                                              text=True, 
+                                              timeout=10)
+                        if result.returncode == 0:
+                            version_line = result.stdout.split('\n')[0]
+                            print(f"   ✅ {display_name} (OK) - {version_line}")
+                            return True
+                    except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
+                        continue
+        
+        # Try in virtual environment if global fails
+        venv_path = os.path.join(os.getcwd(), '.venv', 'bin', command)
+        if os.path.exists(venv_path):
+            for flag in version_flags:
+                try:
+                    result = subprocess.run([venv_path, flag], 
+                                          capture_output=True, 
+                                          text=True, 
+                                          timeout=10)
+                    if result.returncode == 0:
+                        version_line = result.stdout.split('\n')[0]
+                        print(f"   ✅ {display_name} (OK - in venv) - {version_line}")
+                        return True
+                except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
+                    continue
+        
+        print(f"   ❌ {display_name} (Not found)")
+        return False
 
 if __name__ == "__main__":
     main()
